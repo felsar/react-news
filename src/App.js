@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react';
+
+import Header from './components/Header';
+import Form from './components/form/';
+import NewsList from './components/NewsList';
+
+//import useSelect from './hooks/useSelect';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    
+    const [category, setCategory] = useState('');
 
+    const [news, setNews] = useState([]);
+    
+    useEffect(() => {
+        const callAPI = async () => {
+            const COUNTRY = "mx";
+            const API_KEY = "0b85db38f9a54957a537b7db83c38871";
+            const API_URL = `https://newsapi.org/v2/top-headlines?country=${COUNTRY}&category=${category}&apiKey=${API_KEY}`;
+
+            const response = await fetch(API_URL);
+            const news = await response.json();
+
+            setNews(news.articles);
+        }
+
+        callAPI();
+    }
+        
+    , [category]
+    );
+
+    return ( 
+        <div id="main">
+            <Header title='News' />
+            <div className="container white">
+                <Form
+                    setCategory={setCategory}
+                />
+
+                <NewsList 
+                    news={news}
+                />
+            </div>
+        </div>
+     );
+}
+ 
 export default App;
